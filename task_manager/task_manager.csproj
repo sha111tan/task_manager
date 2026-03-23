@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\avalonia-logo.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+
+    <HotAvaloniaAutoEnable Condition="'$(Configuration)' == 'Debug'">false</HotAvaloniaAutoEnable>
+    <HotAvaloniaMode Condition="'$(Configuration)' == 'Debug'">Aggressive</HotAvaloniaMode>
+    <HotAvaloniaHotkey Condition="'$(Configuration)' == 'Debug'">Alt+F5</HotAvaloniaHotkey>
+    <HotAvalonia Condition="'$(Configuration)' == 'Debug'">true</HotAvalonia>
+    <HotAvaloniaInitialPatching Condition="'$(Configuration)' == 'Debug'">enable</HotAvaloniaInitialPatching>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>	
+	
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.12" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
+	  <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.12">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="HotAvalonia" Version="3.*" PrivateAssets="All" Publish="True" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.12" PrivateAssets="All" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="MonoMod.RuntimeDetour" Version="*" PrivateAssets="All" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:task_manager.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        x:Class="task_manager.Views.UserEditorWindow"
+        x:DataType="vm:UserEditorViewModel"
+        Width="480" Height="300"
+        WindowStartupLocation="CenterOwner"
+        Background="#F6F7FB">
+    <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="16" Padding="16">
+        <StackPanel Spacing="10">
+            
+            <TextBox Text="{Binding Login}" Watermark="Введите логин" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+
+           
+            <TextBox Text="{Binding Password}" PasswordChar="*" Watermark="Введите пароль" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+
+            <TextBlock Text="Роль" />
+            <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" />
+
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,0,0,0">
+                <Button Content="Сохранить" Command="{Binding SaveCommand}"  Background="#FF0078D4" Foreground="#FFFFFF" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+                <Button Content="Удалить" Command="{Binding DeleteCommand}"  Background="#FF3B30" Foreground="#FFFFFF" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" IsVisible="{Binding IsEdit}" /> 
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>
+

@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:task_manager.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        x:Class="task_manager.Views.ConfirmDialog"
+        x:DataType="vm:ConfirmDialogViewModel"
+        Width="420" Height="170"
+        WindowStartupLocation="CenterOwner"
+        Background="#F6F7FB"
+        CanResize="False">
+    <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="16" Padding="16">
+        <StackPanel Spacing="12">
+            <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                <Button Content="Да" Command="{Binding YesCommand}" MinWidth="90" />
+                <Button Content="Нет" Command="{Binding NoCommand}" MinWidth="90" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>
+

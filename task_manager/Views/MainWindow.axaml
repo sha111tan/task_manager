@@ -1,0 +1,261 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:task_manager.ViewModels"
+        xmlns:m="using:task_manager.Models"
+        mc:Ignorable="d"
+        x:Class="task_manager.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Менеджер задач" Width="1200" Height="720"
+        Background="#F6F7FB"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <!-- Полоски статусов: системные оттенки Apple (HIG, light) -->
+
+        <DataTemplate x:Key="KanbanTaskCardTemplate" x:DataType="m:TaskItem">
+            <Button
+                Command="{Binding ((vm:MainWindowViewModel)DataContext).SelectTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                CommandParameter="{Binding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Background="#FFFFFF"
+                BorderBrush="#E6EAF2"
+                
+                BorderThickness="2"
+                CornerRadius="16"
+                Padding="12"
+                Margin="0,0,0,10">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{Binding Title}" FontWeight="Bold" Foreground="#111827" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding DescriptionPreview}" FontSize="12" Foreground="#888888" TextWrapping="Wrap" />
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/> 
+                            <ColumnDefinition Width="*"/>   
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding Assignee.Login, TargetNullValue='—'}"
+                            FontWeight="SemiBold"
+                            Foreground="#111827"
+                            FontSize="13"
+                            TextWrapping="Wrap"/>
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding CreatedDate, StringFormat='{}{0:dd.MM}'}"
+                            FontWeight="SemiBold"
+                            Foreground="#888888"
+                            FontSize="13"
+                            HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+            </Button>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.Styles>
+        <Style Selector="ItemsControl > ContentPresenter">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+    </Window.Styles>
+    <Grid>
+        <TabControl >
+            <!-- Общие для всех -->
+            <TabItem Header="Назначенные задачи" Foreground="#000000" Margin="10,0,0,0" >
+                <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="10" Padding="16">
+                    <Grid RowDefinitions="Auto,*">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="26" VerticalAlignment="Center" Margin="0,0,0,12">
+                            <Button
+                                Content="Создать задачу"
+                                Command="{Binding NewTaskCommand}"
+                                IsVisible="{Binding IsManagerOrAdmin}"
+                                Background="#FF0078D4"
+                                Foreground="#FFFFFF"
+                                CornerRadius="12"
+                                Cursor="Hand"
+                                BorderThickness="2"
+                                BorderBrush="#E6EAF2" />
+                            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" IsVisible="{Binding IsManagerOrAdmin}">
+                                <TextBlock Text="Дата от" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#374151" />
+                                <DatePicker SelectedDate="{Binding FilterDateFrom}" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+                                <TextBlock Text="до" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#374151" />
+                                <DatePicker SelectedDate="{Binding FilterDateTo}" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+                                <TextBlock Text="Исполнитель" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#374151" />
+                                <ComboBox  ItemsSource="{Binding AssigneeFilterOptions}" SelectedItem="{Binding SelectedAssigneeFilter}" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2">
+                                    <ComboBox.ItemTemplate >
+                                        <DataTemplate DataType="vm:AssigneeFilterOption" >
+                                            <TextBlock Text="{Binding Label}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,12" Padding="0,0,20,0">
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                                <Border Grid.Column="0" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#007AFF" />
+                                            <TextBlock Text="Новые" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding NewTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#FF9500" />
+                                            <TextBlock Text="В работе" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding InProgressTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#30D158" />
+                                            <TextBlock Text="Завершенные" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding CompletedTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="3" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#FF3B30" />
+                                            <TextBlock Text="Отмененные" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding CancelledTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- Только Admin -->
+            <TabItem Header="Пользователи" IsVisible="{Binding IsAdmin}" Foreground="#000000">
+                <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="12" Padding="16">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,10">
+                            <Button Content="Создать пользователя"
+                                    Command="{Binding NewUserCommand}"
+                                    Grid.Column="0"
+                                    Background="#FF0078D4"
+                                    Foreground="#FFFFFF"
+                                    CornerRadius="12"
+                                    BorderThickness="2"
+                                    BorderBrush="#E6EAF2"
+                                     />
+                            <TextBox Text="{Binding SearchText}"
+                                     Grid.Column="1"
+                                     Watermark="Поиск пользователей"
+                                     Background="#ffffff"
+                                     CornerRadius="12"
+                                     BorderThickness="2"
+                                     BorderBrush="#E6EAF2" />
+                        </Grid>
+                        <ListBox ItemsSource="{Binding AllUsers}"
+                                 SelectedItem="{Binding SelectedUser}"
+                                 Margin="0,12,0,12">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="m:User">
+                                    <Button
+                                        Command="{Binding ((vm:MainWindowViewModel)DataContext).OpenUserEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        Background="#FFFFFF"
+                                        BorderBrush="#E6EAF2"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="10"
+                                        Cursor="Hand">
+                                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Login}" FontWeight="SemiBold" FontSize="14" />
+                                            <TextBlock Text="{Binding Role}" FontSize="12" Foreground="#6B7280" />
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBlock Text="{Binding OperationError}" Foreground="Red" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </TabItem>
+
+            <TabItem Header="Все задачи" IsVisible="{Binding IsAdmin}" Foreground="#000000">
+                <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="12" Padding="16">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="0,0,0,12">
+                            <TextBlock Text="Поиск задач" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#374151" />
+                            <TextBox Text="{Binding TaskSearchText}"
+                                     Watermark="Поиск по названию или описанию"
+                                     MinWidth="320"
+                                     Background="#ffffff"
+                                     CornerRadius="12"
+                                     BorderThickness="2"
+                                     BorderBrush="#E6EAF2" />
+                        </StackPanel>
+                        <ScrollViewer Grid.Row="1"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      Margin="0,0,0,12"
+                                      Padding="0,0,20,0">
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                                <Border Grid.Column="0" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#007AFF" />
+                                            <TextBlock Text="Новые" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding AllNewTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#FF9500" />
+                                            <TextBlock Text="В работе" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding AllInProgressTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#30D158" />
+                                            <TextBlock Text="Завершенные" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding AllCompletedTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="3" CornerRadius="12" Background="#F6F6F6" BorderBrush="#E6EAF2" BorderThickness="1" Padding="10">
+                                    <StackPanel Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Border Width="4" Height="20" CornerRadius="2" VerticalAlignment="Center" Background="#FF3B30" />
+                                            <TextBlock Text="Отмененные" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding AllCancelledTasks}" ItemTemplate="{StaticResource KanbanTaskCardTemplate}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </ScrollViewer>
+
+                        <TextBlock Grid.Row="2" Text="{Binding OperationError}" Foreground="Red" TextWrapping="Wrap" />
+                    </Grid>
+                </Border>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

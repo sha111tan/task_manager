@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:task_manager.ViewModels.Dialogs"
+        xmlns:m="using:task_manager.Models"
+        mc:Ignorable="d"
+        x:Class="task_manager.Views.TaskDetailsWindow"
+        x:DataType="vm:TaskDetailsViewModel"
+        Width="480" MinHeight="320"
+        SizeToContent="Height"
+        MaxHeight="640"
+        WindowStartupLocation="CenterOwner"
+        Background="#F6F7FB"
+        CanResize="True">
+    <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="16" Padding="20">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <TextBlock Grid.Row="0"
+                       Text="{Binding CurrentTask.Title}"
+                       FontSize="18" FontWeight="Bold" Foreground="#111827" TextWrapping="Wrap"
+                       IsVisible="{Binding IsTitleDescriptionReadOnly}" />
+            <ScrollViewer Grid.Row="1"  VerticalScrollBarVisibility="Auto" >
+                <StackPanel Spacing="10">
+                    <StackPanel Spacing="6" IsVisible="{Binding CanManageAssigneeAndDelete}">
+                        <TextBlock Text="Название" FontWeight="SemiBold" Foreground="#374151" />
+                        <TextBox Text="{Binding EditableTitle}"
+                                 FontSize="16" FontWeight="SemiBold"
+                                 HorizontalAlignment="Stretch" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+                    </StackPanel>
+                    <StackPanel Spacing="6" IsVisible="{Binding CanManageAssigneeAndDelete}">
+                        <TextBlock Text="Описание" FontWeight="SemiBold" Foreground="#374151" />
+                        <TextBox Text="{Binding EditableDescription}"
+                                 AcceptsReturn="True" MinHeight="80" TextWrapping="Wrap"
+                                 HorizontalAlignment="Stretch" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding CurrentTask.Description}" TextWrapping="Wrap" Foreground="#4B5563"
+                               IsVisible="{Binding IsTitleDescriptionReadOnly}" />
+                    <StackPanel Spacing="6" >
+                        <TextBlock Text="Статус" FontWeight="SemiBold" Foreground="#374151" />
+                        <ComboBox
+                            ItemsSource="{Binding StatusOptions}"
+                            SelectedItem="{Binding SelectedStatusOption}"
+                            HorizontalAlignment="Stretch" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="vm:TaskStatusOption">
+                                    <TextBlock Text="{Binding Label}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Spacing="6" IsVisible="{Binding CanManageAssigneeAndDelete}">
+                        <TextBlock Text="Исполнитель" FontWeight="SemiBold" Foreground="#374151" />
+                        <ComboBox
+                            ItemsSource="{Binding PossibleAssignees}"
+                            SelectedItem="{Binding SelectedAssignee}"
+                            HorizontalAlignment="Stretch" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="m:User">
+                                    <TextBlock Text="{Binding Login}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="Создано:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding CurrentTask.CreatedDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="Автор:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding CurrentTask.Author.Login, TargetNullValue='—'}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="Исполнитель:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding CurrentTask.Assignee.Login, TargetNullValue='—'}" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                <Button Grid.Column="1" Content="Сохранить" Command="{Binding SaveChangesCommand}"  Background="#FF0078D4" Foreground="#FFFFFF" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+                <Button Grid.Column="2" Content="Удалить" Command="{Binding DeleteTaskCommand}" IsVisible="{Binding CanManageAssigneeAndDelete}"  Background="#FF3B30" Foreground="#FFFFFF" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
+

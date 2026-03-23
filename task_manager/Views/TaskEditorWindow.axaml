@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:task_manager.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        x:Class="task_manager.Views.TaskEditorWindow"
+        x:DataType="vm:TaskEditorViewModel"
+        Width="520" Height="390"
+        WindowStartupLocation="CenterOwner"
+        Background="#F6F7FB">
+    <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="16" Padding="16">
+        <StackPanel Spacing="10">
+            <TextBlock Text="{Binding IsNew, StringFormat={}{0:Создание задачи}}" IsVisible="False"/>
+            <TextBlock Text="{Binding CanEditFields, StringFormat={}{0}}" IsVisible="False"/>
+
+            
+            <TextBox Text="{Binding Title}" Watermark="Введите название" IsVisible="{Binding CanEditFields}" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+
+            
+            <TextBox Text="{Binding Description}" Watermark="Введите описание" AcceptsReturn="True" Height="80" TextWrapping="Wrap"
+                     IsVisible="{Binding CanEditFields}" Background="#ffffff" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2"/>
+
+            <TextBlock Text="Исполнитель" IsVisible="{Binding CanEditAssignee}" />
+            <ComboBox ItemsSource="{Binding Assignees}" SelectedItem="{Binding SelectedAssignee}" DisplayMemberBinding="{Binding Login}"
+                      IsVisible="{Binding CanEditAssignee}" Background="#ffffff" CornerRadius="8" BorderThickness="2" BorderBrush="#E6EAF2"/>
+
+            <TextBlock Text="Статус" />
+            <ComboBox ItemsSource="{Binding StatusOptions}"
+                      SelectedItem="{Binding SelectedStatusOption}"
+                      Background="#ffffff"
+                      CornerRadius="8"
+                      BorderThickness="2"
+                      BorderBrush="#E6EAF2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:TaskStatusOption">
+                        <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" >
+                <Button Content="Сохранить" Command="{Binding SaveCommand}"  Background="#FF0078D4" Foreground="#FFFFFF" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+               
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>
+

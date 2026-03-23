@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:task_manager.ViewModels"
+        mc:Ignorable="d"
+        x:Class="task_manager.Views.LoginWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        x:DataType="vm:LoginViewModel"
+        Title="Авторизация" Width="400" Height="280"
+        Background="#F6F7FB"
+        WindowStartupLocation="CenterScreen">
+    <Border CornerRadius="16" BorderThickness="1" BorderBrush="#E6EAF2" Background="#FFFFFF" Margin="16" Padding="16">
+        <StackPanel Spacing="14">
+            <TextBlock Text="Менеджер задач" FontWeight="SemiBold" FontSize="24" HorizontalAlignment="Center"/>
+            <TextBox Text="{Binding Login}" Watermark="Введите логин" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+            
+            <TextBox Text="{Binding Password}" PasswordChar="*" Watermark="Введите пароль" CornerRadius="12" BorderThickness="2" BorderBrush="#E6EAF2" />
+            <Button Content="Войти"
+                    Command="{Binding LoginCommand}"
+                    Background="#FF0078D4"
+                    Foreground="#FFFFFF"
+                    CornerRadius="12"
+                    BorderThickness="2"
+                    BorderBrush="#E6EAF2"
+                    HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" />
+        </StackPanel>
+    </Border>
+</Window>
